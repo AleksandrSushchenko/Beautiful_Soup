@@ -24,17 +24,13 @@ def parser_articl(artical_tag):
         'link':link
     }
 
-def parse_hbr_page(num_page):
-    page_html = get_page(f'{HABR_ARTICLES}page{num_page}/').text
-    soup = BeautifulSoup(page_html, features='lxml')
+def main():
+    main_html = get_page(HABR_ARTICLES).text
+    soup = BeautifulSoup(main_html, features='lxml')
     articles = soup.find_all('article')
     for arcticl in articles:
         parsed = parser_articl(arcticl)
         print(parsed)
-
-def main():
-    for i in range(1,11):
-        parse_hbr_page(i)
 
 if __name__ == '__main__':
     main()
