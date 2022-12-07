@@ -1,3 +1,5 @@
+import re
+
 import  requests
 from bs4 import BeautifulSoup
 from fake_headers import Headers
@@ -13,14 +15,29 @@ def get_page(url):
 
 def parser_vakans(vacan_tag):
     link = vacan_tag.find(class_="serp-item__title")['href']
-    # zp = vacan_tag.find('span').find('data-qa="vacancy-serp__vacancy-compensation"').find(class_="bloko-header-section-3")
+    zp = vacan_tag.find(class_="bloko-header-section-3").find_next_sibling().find_next_sibling().text
     company = vacan_tag.find(class_="vacancy-serp-item__meta-info-company").find('a').text
-    city = vacan_tag.find(class_="bloko-text").find_parent().text
+    city = vacan_tag.find(class_='bloko-v-spacing-container bloko-v-spacing-container_base-2').find_next_sibling().text
+    flask = vacan_tag.find(class_="g-user-content").find(text=re.compile('Flask'))
+    django = vacan_tag.find(class_="g-user-content").find(text=re.compile('Django'))
+
+    if flask == None:
+        flask = False
+    else:
+        flask = True
+
+    if django == None:
+        django = False
+    else:
+        django = True
+
     return {
         'link': link,
-        # 'ZP': zp
+        'ZP': zp.replace('\u202f', ' '),
         'company': company,
-        'city': city
+        'city': city.replace('\xa01\xa0','...'),
+        'flask': flask,
+        'django': django
     }
 
 def main():
@@ -29,7 +46,9 @@ def main():
     vakans = soup.find_all('div', class_="serp-item")
     for vakan in vakans:
         parsed = parser_vakans(vakan)
-        print(parsed)
+        if parsed['flask'] == True or parsed['django'] == True:
+            print(parsed)
+
 
 if __name__ == '__main__':
     main()
