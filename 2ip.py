@@ -1,9 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-# from fake_headers import Headers
 
-# headers = Headers(browser='chrome', os='win')
-# print(headers.generate())
 
 html = requests.get('https://2ip.ru').text
 
