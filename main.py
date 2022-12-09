@@ -3,6 +3,7 @@ import re
 import  requests
 from bs4 import BeautifulSoup
 from fake_headers import Headers
+import json
 
 headers = Headers(browser='chrome', os='wim')
 print(headers.generate())
@@ -40,6 +41,13 @@ def parser_vakans(vacan_tag):
         'django': django
     }
 
+def write_json (data, file_name):
+    data = json.dumps(data)
+    data = json.loads(data)
+    with open(file_name, 'a', encoding='utf-8') as file:
+        json.dump(data, file)
+        file.write('\n')
+
 def main():
     main_html = get_page(HH_SP).text
     soup = BeautifulSoup(main_html, features='html5lib')
@@ -48,6 +56,7 @@ def main():
         parsed = parser_vakans(vakan)
         if parsed['flask'] == True or parsed['django'] == True:
             print(parsed)
+            write_json(parsed, 'vuborka_hh.json')
 
 
 if __name__ == '__main__':
